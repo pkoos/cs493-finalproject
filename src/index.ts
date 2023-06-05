@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({
 
 app.get('/test', (req: Request, res: Response) => {
     console.log("test complete");
-    res.status(200).send();
+    res.status(200).json({"status": "Success!"});
 });
 
 app.listen(port, () => {
