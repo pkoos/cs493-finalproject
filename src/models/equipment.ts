@@ -6,6 +6,12 @@ export class Equipment {
     cost: number = -1;
 
     isValid(): boolean {
-        return false;
+        const valid: boolean = 
+            this.name != undefined && this.name != "" &&
+            this.equipment_type != undefined && this.equipment_type != -1 &&
+            this.description != undefined && this.description != "" &&
+            this.cost != undefined && this.cost != -1;
+            
+        return valid;
     }
 }

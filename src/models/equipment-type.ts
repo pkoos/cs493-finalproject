@@ -3,6 +3,8 @@ export class EquipmentType {
     name: string = "";
 
     isValid(): boolean {
-        return false;
+        const valid: boolean = 
+            this.name != undefined && this.name != "";
+        return valid;
     }
 }

@@ -5,6 +5,11 @@ export class User {
     type: string = "";
 
     isValid(): boolean {
-        return false;
+        const valid: boolean = 
+            this.email != undefined && this.email != "" &&
+            this.hash != undefined && this.hash != "" &&
+            this.type != undefined && this.type != "";
+        
+            return valid;
     }
 }
