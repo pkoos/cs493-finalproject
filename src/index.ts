@@ -23,6 +23,86 @@ app.get('/test', (req: Request, res: Response) => {
     res.status(200).json({"status": "Success!"});
 });
 
+async function initializeDatabase() {
+    const createUserTable: string = 
+    `CREATE TABLE IF NOT EXISTS user(
+        id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        password VARCHAR(60) NOT NULL,
+        type VARCHAR(10) NOT NULL)`;
+
+    const createPlayerCharacterTable: string = 
+    `CREATE TABLE IF NOT EXISTS player_character(
+        id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        owner_id MEDIUMINT UNSIGNED NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        class_id MEDIUMINT UNSIGNED NOT NULL,
+        race_id MEDIUMINT UNSIGNED NOT NULL,
+        hitpoints INT NOT NULL,
+        background VARCHAR(1024),
+        alignment VARCHAR(64) NOT NULL,
+        image_id MEDIUMINT UNSIGNED NOT NULL)`;
+
+    const createRaceTable: string = 
+    `CREATE TABLE IF NOT EXISTS race(
+        id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        owner_id MEDIUMINT UNSIGNED NOT NULL,
+        name VARCHAR(64) NOT NULL,
+        description VARCHAR(1024) NOT NULL)`;
+
+    const createStatTable: string = 
+    `CREATE TABLE IF NOT EXISTS stat(
+        id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(16) NOT NULL,
+        value INT NOT NULL)`;
+    
+    const createCharacterClassTable: string = 
+    `CREATE TABLE IF NOT EXISTS character_class(
+        ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        owner_id MEDIUMINT UNSIGNED NOT NULL,
+        name VARCHAR(64) NOT NULL,
+        description VARCHAR(1024) NOT NULL,
+        hit_die INT NOT NULL)`;
+    
+    const createCharacterImageTable: string = 
+    `CREATE TABLE IF NOT EXISTS character_image(
+        ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        owner_id MEDIUMINT UNSIGNED NOT NULL,
+        pc_id MEDIUMINT UNSIGNED NOT NULL,
+        image_name VARCHAR(64) NOT NULL,
+        content_type VARCHAR(16) NOT NULL,
+        image_data MEDIUMBLOB,
+        thumbnail_data MEDIUMBLOB)`;
+    
+    const createEquipmentTypeTable: string =
+    `CREATE TABLE IF NOT EXISTS equipment_type(
+        ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(64) NOT NULL)`;
+    
+    const createEquipmentTable: string =
+    `CREATE TABLE IF NOT EXISTS equipment(
+        ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        owner_id MEDIUMINT UNSIGNED NOT NULL,
+        name VARCHAR(64) NOT NULL,
+        type MEDIUMINT NOT NULL,
+        description VARCHAR(1024) NOT NULL,
+        cost INT UNSIGNED NOT NULL)`;
+
+    await db.query(createUserTable);
+    await db.query(createPlayerCharacterTable);
+    await db.query(createRaceTable);
+    await db.query(createStatTable);
+    await db.query(createCharacterClassTable);
+    await db.query(createCharacterImageTable);
+    await db.query(createEquipmentTypeTable);
+    await db.query(createEquipmentTable);
+}
+
+
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}.`);
 });
+
+
+initializeDatabase();
