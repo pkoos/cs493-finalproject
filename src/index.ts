@@ -25,7 +25,7 @@ app.get('/test', (req: Request, res: Response) => {
 
 async function initializeDatabase() {
     const createUserTable: string = 
-    `CREATE TABLE IF NOT EXISTS user(
+    `CREATE TABLE IF NOT EXISTS User(
         id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
@@ -33,7 +33,7 @@ async function initializeDatabase() {
         type VARCHAR(10) NOT NULL)`;
 
     const createPlayerCharacterTable: string = 
-    `CREATE TABLE IF NOT EXISTS player_character(
+    `CREATE TABLE IF NOT EXISTS Player_Character(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
         name VARCHAR(255) NOT NULL,
@@ -45,20 +45,20 @@ async function initializeDatabase() {
         image_id MEDIUMINT UNSIGNED NOT NULL)`;
 
     const createRaceTable: string = 
-    `CREATE TABLE IF NOT EXISTS race(
+    `CREATE TABLE IF NOT EXISTS Race(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
         name VARCHAR(64) NOT NULL,
         description VARCHAR(1024) NOT NULL)`;
 
     const createStatTable: string = 
-    `CREATE TABLE IF NOT EXISTS stat(
+    `CREATE TABLE IF NOT EXISTS Stat(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(16) NOT NULL,
         value INT NOT NULL)`;
     
     const createCharacterClassTable: string = 
-    `CREATE TABLE IF NOT EXISTS character_class(
+    `CREATE TABLE IF NOT EXISTS Character_Class(
         ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
         name VARCHAR(64) NOT NULL,
@@ -66,7 +66,7 @@ async function initializeDatabase() {
         hit_die INT NOT NULL)`;
     
     const createCharacterImageTable: string = 
-    `CREATE TABLE IF NOT EXISTS character_image(
+    `CREATE TABLE IF NOT EXISTS Character_Image(
         ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
         pc_id MEDIUMINT UNSIGNED NOT NULL,
@@ -76,12 +76,12 @@ async function initializeDatabase() {
         thumbnail_data MEDIUMBLOB)`;
     
     const createEquipmentTypeTable: string =
-    `CREATE TABLE IF NOT EXISTS equipment_type(
+    `CREATE TABLE IF NOT EXISTS Equipment_Type(
         ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(64) NOT NULL)`;
     
     const createEquipmentTable: string =
-    `CREATE TABLE IF NOT EXISTS equipment(
+    `CREATE TABLE IF NOT EXISTS Equipment(
         ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
         name VARCHAR(64) NOT NULL,
