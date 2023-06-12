@@ -32,14 +32,34 @@ app.get('/test', (req: Request, res: Response) => {
     res.status(200).json({"status": "Success!"});
 });
 
+const addPlayerCharacterPath: string = `${baseApiPath}/character/add`;
+const modifyPlayerCharacterPath: string = `${baseApiPath}/character/modify`;
+const deletePlayerCharacterPath: string = `${baseApiPath}/character/remove`;
+
+const addRacePath: string = `${baseApiPath}/race/add`;
+const modifyRacePath: string = `${baseApiPath}/race/modify`;
+const removeRacePath: string = `${baseApiPath}/race/remove`;
+
+const addCharacterClassPath: string = `${baseApiPath}/class/add`;
+const modifyCharacterClassPath: string = `${baseApiPath}/class/modify`;
+const removeCharacterClassPath: string = `${baseApiPath}/class/remove`;
+
+const addCharacterImagePath: string = `${baseApiPath}/image/add`;
+const modifyCharacterImagePath: string = `${baseApiPath}/image/modify`;
+const removeCharacterImagePath: string = `${baseApiPath}/image/remove`;
+
+const addEquipmentPath: string = `${baseApiPath}/equipment/add`;
+const modifyEquipmentPath: string = `${baseApiPath}/equipment/modify`;
+const removeEquipmentPath: string = `${baseApiPath}/equipment/remove`;
+
 const addUserPath: string = `${baseApiPath}/user/add`;
 app.post(addUserPath, (req: Request, res: Response) => addUser(req, res));
 
 const loginUserPath: string = `${baseApiPath}/user/login`;
 app.post(loginUserPath, (req: Request, res: Response) => loginUser(req, res));
 
-const userDetailsPath: string = `${baseApiPath}/users`;
-app.get(`${userDetailsPath}/:id`, requireAuthentication, (req: Request, res: Response) => getUserDetails(req, res));
+const userDetailsPath: string = `${baseApiPath}/users/:id`;
+app.get(userDetailsPath, requireAuthentication, (req: Request, res: Response) => getUserDetails(req, res));
 
 async function initializeDatabase() {
     const createUserTable: string = 
@@ -120,7 +140,6 @@ async function initializeDatabase() {
 function initializeAPI() {
     initializeDatabase();
 }
-
 
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}.`);
