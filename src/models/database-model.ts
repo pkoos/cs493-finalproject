@@ -11,9 +11,10 @@ export abstract class DatabaseModel<T> {
     abstract insertString(): string;
     abstract updateString(): string;
 
-    async update(): Promise<void> {
+    async update(): Promise<boolean> {
         const updateQueryString: string = `UPDATE ${this.tableName} SET ${this.updateString()} WHERE id=?`;
-        db.query(updateQueryString, this.updateParams());
+        const [db_results] = await db.query(updateQueryString, this.updateParams());
+        return (db_results as ResultSetHeader).affectedRows > 0;
     }
 
     async insert(): Promise<number> {

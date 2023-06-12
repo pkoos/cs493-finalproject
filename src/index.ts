@@ -1,9 +1,14 @@
 import express, {Express, Request, Response} from 'express';
 import bodyParser from 'body-parser';
+import * as dotenv from 'dotenv';
 import mysql2, { Pool } from 'mysql2/promise';
+import { addUser, getUserDetails, loginUser } from './controllers/user-controller';
+import { requireAuthentication } from './utils/auth-helper';
 
 const app: Express = express();
 const port = process.env.PORT ?? 8000;
+const baseApiPath: string = "/api/v1";
+
 
 export const db: Pool =  mysql2.createPool({
     connectionLimit: 10,
@@ -18,10 +23,23 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+dotenv.config();
+
+app.use(bodyParser.json());
+
 app.get('/test', (req: Request, res: Response) => {
     console.log("test complete");
     res.status(200).json({"status": "Success!"});
 });
+
+const addUserPath: string = `${baseApiPath}/user/add`;
+app.post(addUserPath, (req: Request, res: Response) => addUser(req, res));
+
+const loginUserPath: string = `${baseApiPath}/user/login`;
+app.post(loginUserPath, (req: Request, res: Response) => loginUser(req, res));
+
+const userDetailsPath: string = `${baseApiPath}/users`;
+app.get(`${userDetailsPath}/:id`, requireAuthentication, (req: Request, res: Response) => getUserDetails(req, res));
 
 async function initializeDatabase() {
     const createUserTable: string = 
@@ -99,10 +117,13 @@ async function initializeDatabase() {
     await db.query(createEquipmentTable);
 }
 
+function initializeAPI() {
+    initializeDatabase();
+}
+
 
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}.`);
 });
 
-
-initializeDatabase();
+initializeAPI();
