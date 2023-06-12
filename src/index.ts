@@ -6,6 +6,8 @@ import { addUser, getUserDetails, loginUser } from './controllers/user-controlle
 import { requireAuthentication } from './utils/auth-helper';
 import * as rh from './utils/responses-helper';
 
+import { initializeAsyncController, requestTest } from './controllers/async-controller';
+
 const app: Express = express();
 const port = process.env.PORT ?? 8000;
 const baseApiPath: string = "/api/v1";
@@ -148,8 +150,14 @@ app.post(loginUserPath, (req: Request, res: Response) => loginUser(req, res));
 const userDetailsPath: string = `${baseApiPath}/users/:id`;
 app.get(userDetailsPath, requireAuthentication, (req: Request, res: Response) => getUserDetails(req, res));
 
+// FIXME this needs to be removed prior to release
+app.get('/test/async/:message', (req: Request, res: Response) => {
+    requestTest(req.params.message);
+    res.status(200).json({"status": "Success!"});
+});
+
 async function initializeDatabase() {
-    const createUserTable: string = 
+    const createUserTable: string =
     `CREATE TABLE IF NOT EXISTS User(
         id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
@@ -157,7 +165,7 @@ async function initializeDatabase() {
         password VARCHAR(60) NOT NULL,
         type VARCHAR(10) NOT NULL)`;
 
-    const createPlayerCharacterTable: string = 
+    const createPlayerCharacterTable: string =
     `CREATE TABLE IF NOT EXISTS Player_Character(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
@@ -169,28 +177,28 @@ async function initializeDatabase() {
         alignment VARCHAR(64) NOT NULL,
         image_id MEDIUMINT UNSIGNED NOT NULL)`;
 
-    const createRaceTable: string = 
+    const createRaceTable: string =
     `CREATE TABLE IF NOT EXISTS Race(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
         name VARCHAR(64) NOT NULL,
         description VARCHAR(1024) NOT NULL)`;
 
-    const createStatTable: string = 
+    const createStatTable: string =
     `CREATE TABLE IF NOT EXISTS Stat(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(16) NOT NULL,
         value INT NOT NULL)`;
-    
-    const createCharacterClassTable: string = 
+
+    const createCharacterClassTable: string =
     `CREATE TABLE IF NOT EXISTS Character_Class(
         ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
         name VARCHAR(64) NOT NULL,
         description VARCHAR(1024) NOT NULL,
         hit_die INT NOT NULL)`;
-    
-    const createCharacterImageTable: string = 
+
+    const createCharacterImageTable: string =
     `CREATE TABLE IF NOT EXISTS Character_Image(
         ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
@@ -199,12 +207,12 @@ async function initializeDatabase() {
         content_type VARCHAR(16) NOT NULL,
         image_data MEDIUMBLOB,
         thumbnail_data MEDIUMBLOB)`;
-    
+
     const createEquipmentTypeTable: string =
     `CREATE TABLE IF NOT EXISTS Equipment_Type(
         ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(64) NOT NULL)`;
-    
+
     const createEquipmentTable: string =
     `CREATE TABLE IF NOT EXISTS Equipment(
         ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -226,6 +234,7 @@ async function initializeDatabase() {
 
 async function initializeAPI() {
     await initializeDatabase();
+    await initializeAsyncController();
 
     app.listen(port, () => {
         console.log(`⚡️[server]: Server is running at http://localhost:${port}.`);
