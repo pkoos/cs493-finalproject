@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
-import { ResultSetHeader } from 'mysql2/promise';
 import { compare, hash } from 'bcryptjs';
 
 import * as rh from "../utils/responses-helper";
 import { User } from '../models/user';
-import { db } from "../index";
 import { generateAuthToken } from "../utils/auth-helper";
 
 export async function addUser(req: Request, res: Response) {
@@ -12,7 +10,7 @@ export async function addUser(req: Request, res: Response) {
         id: -20,
         name: req.body["name"],
         email: req.body["email"],
-        admin: false
+        type: req.body["type"]
     });
     const new_hash: string = await hash(req.body["password"], 8);
     new_user.password = new_hash;
@@ -21,9 +19,8 @@ export async function addUser(req: Request, res: Response) {
         rh.errorInvalidBody(res);
         return;
     }
-
-    const [db_results] = await db.query(User.insertString(), new_user.insertParams());
-    new_user.id = (db_results as ResultSetHeader).insertId;
+    const new_id: number = await new_user.insert();
+    new_user.id = new_id;
     rh.successResponse(res, {"user": new_user});
 }
 
@@ -63,10 +60,7 @@ export async function validateUser(id: number, password: string): Promise<boolea
 }
 
 export async function getUserByID(user_id: number, includePassword: boolean): Promise<User> {
-    const queryString:string = "SELECT * FROM user WHERE id=?";
-    const params: any[] = [user_id];
-    const [db_results] = await db.query(queryString, params);
-    const db_user: User = (db_results as any[]).length == 0 ? new User() : User.fromDatabase(db_results as any[]);
+    const db_user: User = await new User().findById(user_id);
     if(includePassword) {
         db_user.password = "";
     }

@@ -1,13 +1,16 @@
 import { OkPacket} from 'mysql2/promise';
+import { DatabaseModel } from './database-model';
 
-export class User {
+export class User extends DatabaseModel<User> {
     id: number = -1;
     name: string = "";
     email: string = "";
     password: string = "";
-    admin: boolean = false;
+    type: string = "";
 
+    tableName: string = "User";
     public constructor(init?: Partial<User>) {
+        super();
         Object.assign(this, init);
     }
 
@@ -27,7 +30,7 @@ export class User {
             name: db_user.name,
             email: db_user.email,
             password: db_user.password,
-            admin: db_user.admin
+            type: db_user.type
         });
 
         return user;
@@ -47,7 +50,7 @@ export class User {
     }
 
     insertParams(): any[] {
-        return [this.name, this.email, this.password, this.admin];
+        return [this.name, this.email, this.password, this.type];
     }
 
     // TODO: not sure if we'll need the modify functions within User, leaving in for consistency
@@ -63,5 +66,27 @@ export class User {
     static generateList(data: OkPacket[]): User[] {
         const return_value: User[] = [];
         return return_value;
+    }
+
+    fromDatabase(data: any[]): User {
+        const db_data: any = data[0];
+        
+        this.id = db_data.id;
+        this.name = db_data.name;
+        this.email = db_data.email;
+        this.password = db_data.password;
+        this.type = db_data.type;
+
+        return this;
+    }
+
+    insertString(): string {
+        return `(name, email, password, type) VALUES(?, ?, ?, ?)`;
+    }
+    updateString(): string {
+        return `name=?, email=?, password=?, type=?`
+    }
+    updateParams(): any[] {
+        return [ this.name, this.email, this.password, this.type, this.id];
     }
 }
