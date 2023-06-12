@@ -227,10 +227,6 @@ async function initializeDatabase() {
 async function initializeAPI() {
     await initializeDatabase();
 
-
-
-
-
     app.listen(port, () => {
         console.log(`⚡️[server]: Server is running at http://localhost:${port}.`);
     });
