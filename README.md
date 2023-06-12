@@ -15,6 +15,8 @@ $ docker network create --driver bridge chargen-net
 
 $ docker run -d --name chargen-mysql-server --network chargen-net -p "3306:3306" -e "MYSQL_RANDOM_ROOT_PASSWORD=yes" -e "MYSQL_DATABASE=chargen" -e "MYSQL_USER=chargen-user" -e "MYSQL_PASSWORD=asdfqwer1234" mysql
 
+$ docker run -d --name chargen-rabbitmq-server --network chargen-net -p 5672:5672 rabbitmq
+
 ```
 
 #### Set Appropriate Environment Variables
