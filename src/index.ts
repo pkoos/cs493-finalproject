@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv';
 import mysql2, { Pool } from 'mysql2/promise';
 import { addUser, getUserDetails, loginUser } from './controllers/user-controller';
 import { requireAuthentication } from './utils/auth-helper';
+import * as rh from './utils/responses-helper';
 
 const app: Express = express();
 const port = process.env.PORT ?? 8000;
@@ -32,14 +33,120 @@ app.get('/test', (req: Request, res: Response) => {
     res.status(200).json({"status": "Success!"});
 });
 
+const addPlayerCharacterPath: string = `${baseApiPath}/character/add`;
+app.post(addPlayerCharacterPath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "addPlayerCharacterPath"
+    });
+});
+
+const modifyPlayerCharacterPath: string = `${baseApiPath}/character/modify`;
+app.post(modifyPlayerCharacterPath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "modifyPlayerCharacterPath"
+    });
+});
+
+const deletePlayerCharacterPath: string = `${baseApiPath}/character/remove`;
+app.post(deletePlayerCharacterPath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "deletePlayerCharacterPath"
+    });
+});
+
+
+const addRacePath: string = `${baseApiPath}/race/add`;
+app.post(addRacePath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "addRacePath"
+    });
+});
+
+const modifyRacePath: string = `${baseApiPath}/race/modify`;
+app.post(modifyRacePath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "modifyRacePath"
+    });
+});
+
+const removeRacePath: string = `${baseApiPath}/race/remove`;
+app.post(removeRacePath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "removeRacePath"
+    });
+});
+
+const addCharacterClassPath: string = `${baseApiPath}/class/add`;
+app.post(addCharacterClassPath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "addCharacterClassPath"
+    });
+});
+
+const modifyCharacterClassPath: string = `${baseApiPath}/class/modify`;
+app.post(modifyCharacterClassPath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "modifyCharacterClassPath"
+    });
+});
+
+const removeCharacterClassPath: string = `${baseApiPath}/class/remove`;
+app.post(removeCharacterClassPath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "removeCharacterClassPath"
+    });
+});
+
+const addCharacterImagePath: string = `${baseApiPath}/image/add`;
+app.post(addCharacterImagePath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "addCharacterImagePath"
+    });
+});
+
+const modifyCharacterImagePath: string = `${baseApiPath}/image/modify`;
+app.post(modifyCharacterImagePath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "modifyCharacterImagePath"
+    });
+});
+
+const removeCharacterImagePath: string = `${baseApiPath}/image/remove`;
+app.post(removeCharacterImagePath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "removeCharacterImagePath"
+    });
+});
+
+const addEquipmentPath: string = `${baseApiPath}/equipment/add`;
+app.post(addEquipmentPath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "addEquipmentPath"
+    });
+});
+
+const modifyEquipmentPath: string = `${baseApiPath}/equipment/modify`;
+app.post(modifyEquipmentPath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "modifyEquipmentPath"
+    });
+});
+
+const removeEquipmentPath: string = `${baseApiPath}/equipment/remove`;
+app.post(removeEquipmentPath, (req: Request, res: Response) => {
+    rh.successResponse(res, {
+        "status": "removeCharacterClassPath"
+    });
+});
+
 const addUserPath: string = `${baseApiPath}/user/add`;
 app.post(addUserPath, (req: Request, res: Response) => addUser(req, res));
 
 const loginUserPath: string = `${baseApiPath}/user/login`;
 app.post(loginUserPath, (req: Request, res: Response) => loginUser(req, res));
 
-const userDetailsPath: string = `${baseApiPath}/users`;
-app.get(`${userDetailsPath}/:id`, requireAuthentication, (req: Request, res: Response) => getUserDetails(req, res));
+const userDetailsPath: string = `${baseApiPath}/users/:id`;
+app.get(userDetailsPath, requireAuthentication, (req: Request, res: Response) => getUserDetails(req, res));
 
 async function initializeDatabase() {
     const createUserTable: string = 
@@ -117,13 +224,12 @@ async function initializeDatabase() {
     await db.query(createEquipmentTable);
 }
 
-function initializeAPI() {
-    initializeDatabase();
+async function initializeAPI() {
+    await initializeDatabase();
+
+    app.listen(port, () => {
+        console.log(`⚡️[server]: Server is running at http://localhost:${port}.`);
+    });
 }
-
-
-app.listen(port, () => {
-    console.log(`⚡️[server]: Server is running at http://localhost:${port}.`);
-});
 
 initializeAPI();
