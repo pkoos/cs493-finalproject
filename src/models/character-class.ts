@@ -51,6 +51,6 @@ export class CharacterClass extends DatabaseModel<CharacterClass> {
     }
 
     updateString(): string {
-        return `name=?, email=?, password=?, type=?`;
+        return `name=?, bonus_stats=?, description=?, hit_die=?`;
     }
 }
