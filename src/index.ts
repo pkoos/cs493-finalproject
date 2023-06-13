@@ -7,6 +7,7 @@ import { requireAuthentication } from './utils/auth-helper';
 import * as rh from './utils/responses-helper';
 
 import { initializeAsyncController, requestTest } from './controllers/async-controller';
+import { initializeRateLimiting } from './utils/rate-limit-helper';
 
 const app: Express = express();
 const port = process.env.PORT ?? 8000;
@@ -235,6 +236,7 @@ async function initializeDatabase() {
 async function initializeAPI() {
     await initializeDatabase();
     await initializeAsyncController();
+    await initializeRateLimiting();
 
     app.listen(port, () => {
         console.log(`⚡️[server]: Server is running at http://localhost:${port}.`);
