@@ -11,7 +11,7 @@ export async function initializeAsyncController() {
     channel = await connection.createChannel();
     queues.forEach(async (queue) => { await channel.assertQueue(queue); });
 
-    channel.consume('testQueue', (message) => { console.log(message?.content.toString()); });
+    channel.consume('testQueue', (message) => { console.log(message?.content.toString()); }, { noAck: true });
 }
 
 export async function requestTest(message: string) {
