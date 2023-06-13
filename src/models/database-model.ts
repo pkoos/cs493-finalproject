@@ -2,11 +2,18 @@ import { ResultSetHeader } from "mysql2/promise";
 import { db } from "..";
 
 export abstract class DatabaseModel<T> {
+    id: number = -1;
     abstract tableName: string;
 
     abstract isValid(): boolean;
     abstract fromDatabase(data: any[]): T;
-    abstract updateParams(): any[];
+    
+    updateParams(): any[] {
+        const params: any[] = this.insertParams();
+        params.push(this.id);
+
+        return params;
+    }
     abstract insertParams(): any[];
     abstract insertString(): string;
     abstract updateString(): string;
