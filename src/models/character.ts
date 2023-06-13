@@ -41,6 +41,7 @@ export class Character extends DatabaseModel<Character> {
         const db_data: any = data[0];
         this.id = db_data.id;
         this.owner_id = db_data.owner_id;
+        this.name = db_data.name;
         this.class_id = db_data.class_id;
         this.race_id = db_data.race_id;
         this.hitpoints = db_data.hitpoints;
@@ -57,17 +58,17 @@ export class Character extends DatabaseModel<Character> {
     insertParams(): any[] {
         return [
             this.owner_id, this.name, this.class_id, this.race_id, this.hitpoints, this.raw_stats, 
-            this.mod_stats, this.background, this.alignment, this.description
+            this.mod_stats, this.background, this.alignment, this.description, this.inventory
         ];
     }
 
     insertString(): string {
-        return `(owner_id, class_id, race_id, hitpoints, raw_stats, mod_stats, background, alignment, inventory, description)
+        return `(owner_id, name, class_id, race_id, hitpoints, raw_stats, mod_stats, background, alignment, description, inventory)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     }
 
     updateString(): string {
-        return `owner_id=?, class_id=?, race_id=?, hitpoints=?, raw_stats=?,
+        return `owner_id=?, name=?, class_id=?, race_id=?, hitpoints=?, raw_stats=?,
             mod_stats=?, background=?, alignment=?, description=?, inventory=?`
     }
 }
