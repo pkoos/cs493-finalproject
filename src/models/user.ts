@@ -36,36 +36,8 @@ export class User extends DatabaseModel<User> {
         return user;
     }
 
-    static deleteString(): string {
-        return "DELETE FROM user WHERE id=?";
-    }
-
-    deleteParams(): any[] {
-        return [this.id];
-    }
-
-    static insertString(): string {
-        return `INSERT INTO user (name, email, password, admin)
-            VALUES(?, ?, ?, ?)`;
-    }
-
     insertParams(): any[] {
         return [this.name, this.email, this.password, this.type];
-    }
-
-    // TODO: not sure if we'll need the modify functions within User, leaving in for consistency
-    static modifyString(): string {
-        return "";
-    }
-
-    modifyParams(): any[] {
-        return [];
-    }
-
-    // TODO: not sure if we'll need the to generate a list of users, leaving in for consistency
-    static generateList(data: OkPacket[]): User[] {
-        const return_value: User[] = [];
-        return return_value;
     }
 
     fromDatabase(data: any[]): User {
@@ -86,10 +58,4 @@ export class User extends DatabaseModel<User> {
     updateString(): string {
         return `name=?, email=?, password=?, type=?`
     }
-    // updateParams(): any[] {
-    //     const params: any[] = this.insertParams();
-    //     params.push(this.id);
-        
-    //     return params;
-    // }
 }
