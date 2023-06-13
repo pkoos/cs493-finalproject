@@ -8,7 +8,7 @@ export class User extends DatabaseModel<User> {
     password: string = "";
     type: string = "";
 
-    tableName: string = "User";
+    tableName = "User";
     public constructor(init?: Partial<User>) {
         super();
         Object.assign(this, init);
@@ -23,8 +23,8 @@ export class User extends DatabaseModel<User> {
         return valid;
     }
 
-    static fromDatabase(row: any[]): User {
-        const db_user: any = row[0];
+    static fromDatabase(data: any[]): User {
+        const db_user: any = data[0];
         const user: User = new User({
             id: db_user.id,
             name: db_user.name,
@@ -86,7 +86,10 @@ export class User extends DatabaseModel<User> {
     updateString(): string {
         return `name=?, email=?, password=?, type=?`
     }
-    updateParams(): any[] {
-        return [ this.name, this.email, this.password, this.type, this.id];
-    }
+    // updateParams(): any[] {
+    //     const params: any[] = this.insertParams();
+    //     params.push(this.id);
+        
+    //     return params;
+    // }
 }
