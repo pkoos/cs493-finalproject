@@ -38,7 +38,7 @@ export function successResponse(res: Response, successDetails: Object) {
     };
 
     Object.assign(success_json, successDetails);
-    
+
     res.status(200).json(success_json);
 }
 
@@ -48,4 +48,8 @@ export function errorInvalidCredentials(res: Response) {
 
 export function errorInvalidToken(res: Response) {
     genericErrorResponse(res, 401, "Invalid authentication token provided.");
+}
+
+export function errorTooManyRequests(res: Response) {
+    genericErrorResponse(res, 429, "Too many requests per minute.");
 }

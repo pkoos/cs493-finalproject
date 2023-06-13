@@ -17,6 +17,8 @@ $ docker run -d --name chargen-mysql-server --network chargen-net -p "3306:3306"
 
 $ docker run -d --name chargen-rabbitmq-server --network chargen-net -p 5672:5672 rabbitmq
 
+$ docker run -d --name chargen-redis-server -p 6379:6379 redis:latest
+
 ```
 
 #### Set Appropriate Environment Variables
@@ -24,6 +26,11 @@ $ docker run -d --name chargen-rabbitmq-server --network chargen-net -p 5672:567
 $ export MYSQL_USER=chargen-user
 $ export MYSQL_PASSWORD=asdfqwer1234
 $ export MYSQL_DATABASE=chargen
+```
+
+Additionally the `API_MAX_REQUESTS` environment variable can be used to override the default number of allowed requests per minute.
+```
+$ export API_MAX_REQUESTS=1000
 ```
 
 #### Run:
