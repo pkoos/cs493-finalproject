@@ -1,7 +1,7 @@
 import amqp from 'amqplib';
 
-const rabbitmqHost = process.env.RABBITMQ_HOST ?? "localhost";
-const rabbitmqUrl = `amqp://${rabbitmqHost}`;
+const rabbitmqHost: string = process.env.RABBITMQ_HOST ?? "localhost";
+const rabbitmqUrl: string = `amqp://${rabbitmqHost}`;
 var connection: amqp.Connection;
 var channel: amqp.Channel;
 const queues: string[] = ['testQueue'];
