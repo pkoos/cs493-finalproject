@@ -7,7 +7,7 @@ import { requireAuthentication } from './utils/auth-helper';
 import * as rh from './utils/responses-helper';
 
 import { initializeAsyncController, requestTest } from './controllers/async-controller';
-import { initializeRateLimiting } from './utils/rate-limit-helper';
+import { initializeRateLimiting, rateLimit } from './utils/rate-limit-helper';
 
 const app: Express = express();
 const port = process.env.PORT ?? 8000;
@@ -26,6 +26,8 @@ export const db: Pool =  mysql2.createPool({
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+app.use(rateLimit);
 
 dotenv.config();
 
