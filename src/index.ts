@@ -8,6 +8,7 @@ import * as rh from './utils/responses-helper';
 
 import { initializeAsyncController, requestTest } from './controllers/async-controller';
 import { initializeRateLimiting, rateLimit } from './utils/rate-limit-helper';
+import { Stats } from './models/stats';
 
 const app: Express = express();
 const port = process.env.PORT ?? 8000;
@@ -159,12 +160,23 @@ app.get('/test/async/:message', (req: Request, res: Response) => {
     res.status(200).json({"status": "Success!"});
 });
 
+async function testStuffAndThings() {
+    console.log(`testing stuff and things`);
+    const new_stats: Stats = new Stats();
+    const new_id: number = await new_stats.insert();
+
+    new_stats.id = new_id;
+    new_stats.type_id = 420;
+    const updateSucceeded: boolean = await new_stats.update();
+    console.log(`did update succeed? ${updateSucceeded}`);
+}
+
 async function initializeDatabase(freshStart: boolean) {
     if(freshStart) {
         const freshStartTables: string = 
             `DROP TABLE IF EXISTS User, Player_Character, Race, Stats, Character_Class, 
                 Character_Image, Equipment_Type, Equipment`;
-            db.query(freshStartTables);
+        await db.query(freshStartTables);
     }
 
 
@@ -254,13 +266,14 @@ async function initializeDatabase(freshStart: boolean) {
 }
 
 async function initializeAPI() {
-    await initializeDatabase(false);
+    await initializeDatabase(true);
     await initializeAsyncController();
     await initializeRateLimiting();
 
     app.listen(port, () => {
         console.log(`⚡️[server]: Server is running at http://localhost:${port}.`);
     });
+    await testStuffAndThings();
 }
 
 initializeAPI();
