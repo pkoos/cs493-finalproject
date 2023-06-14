@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import * as dotenv from 'dotenv';
 import mysql2, { Pool } from 'mysql2/promise';
 import { addUser, getUserDetails, loginUser } from './controllers/user-controller';
-import { addCharacterImage, getCharacterImage } from './controllers/character-image-controller';
+import { addCharacterImage, getCharacterImage, getCharacterImageThumbnail } from './controllers/character-image-controller';
 import { requireAuthentication } from './utils/auth-helper';
 import * as rh from './utils/responses-helper';
 
@@ -108,6 +108,9 @@ app.post(removeCharacterImagePath, (req: Request, res: Response) => {
 
 const getCharacterImagePath: string = `${baseApiPath}/image/:id`;
 app.get(getCharacterImagePath, getCharacterImage);
+
+const getCharacterThumbnailPath: string = `${baseApiPath}/thumbnail/:id`;
+app.get(getCharacterThumbnailPath, getCharacterImageThumbnail);
 
 const addEquipmentPath: string = `${baseApiPath}/equipment/add`;
 app.post(addEquipmentPath, (req: Request, res: Response) => {
