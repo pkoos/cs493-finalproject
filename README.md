@@ -33,6 +33,8 @@ Additionally the `API_MAX_REQUESTS` environment variable can be used to override
 $ export API_MAX_REQUESTS=1000
 ```
 
+Setting `API_MAX_REQUESTS` to 0 or a negative number will result in rate limiting being turned off. Which may be helpful during development.
+
 #### Run:
 ```
 docker start chargen-mysql-server
