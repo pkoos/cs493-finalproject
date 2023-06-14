@@ -60,7 +60,7 @@ export async function validateUser(id: number, password: string): Promise<boolea
 }
 
 export async function getUserByID(user_id: number, includePassword: boolean): Promise<User> {
-    const db_user: User = await new User().findById(user_id);
+    const db_user: User = await new User().findById(user_id) ?? new User();
     if(includePassword) {
         db_user.password = "";
     }

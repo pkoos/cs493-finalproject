@@ -8,7 +8,7 @@ import * as rh from './utils/responses-helper';
 
 import { initializeAsyncController, requestTest } from './controllers/async-controller';
 import { initializeRateLimiting, rateLimit } from './utils/rate-limit-helper';
-import { addRace } from './controllers/race-controller';
+import { addRace, modifyRace } from './controllers/race-controller';
 
 const app: Express = express();
 const port = process.env.PORT ?? 8000;
@@ -64,12 +64,8 @@ app.post(deletePlayerCharacterPath, (req: Request, res: Response) => {
 const addRacePath: string = `${baseApiPath}/race/add`;
 app.post(addRacePath, requireAuthentication, (req: Request, res: Response) => addRace(req, res));
 
-const modifyRacePath: string = `${baseApiPath}/race/modify`;
-app.post(modifyRacePath, (req: Request, res: Response) => {
-    rh.successResponse(res, {
-        "status": "modifyRacePath"
-    });
-});
+const modifyRacePath: string = `${baseApiPath}/race/modify/:id`;
+app.post(modifyRacePath, requireAuthentication, (req: Request, res: Response) => modifyRace(req, res));
 
 const removeRacePath: string = `${baseApiPath}/race/remove`;
 app.post(removeRacePath, (req: Request, res: Response) => {
@@ -158,8 +154,10 @@ app.get('/test/async/:message', (req: Request, res: Response) => {
 
 
 async function initializeDatabase() {
-    const freshStart: boolean = process.env.FRESH_START as unknown as boolean ?? false;
+    const freshStart: boolean = JSON.parse(process.env.FRESH_START as string) ?? false;
+    
     if(freshStart) {
+        console.log(`Dropping existing database tables`);
         const freshStartTables: string = 
             `DROP TABLE IF EXISTS User, Player_Character, Race, Stats, Character_Class, 
                 Character_Image, Equipment_Type, Equipment`;
