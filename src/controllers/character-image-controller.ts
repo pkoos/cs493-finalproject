@@ -1,6 +1,7 @@
 import { Express, Request, Response } from 'express';
 
 import { CharacterImage } from '../models/character-image';
+import { requestImageThumbnail } from './async-controller';
 import { errorServer, errorInvalidBody, successResponse } from '../utils/responses-helper';
 
 export async function addCharacterImage(req: Request, res: Response): Promise<void> {
@@ -28,7 +29,7 @@ export async function addCharacterImage(req: Request, res: Response): Promise<vo
 
         // send it to the database
         const img_id: number = await image.insert();
-
+        requestImageThumbnail(img_id);
         successResponse(res, { status: "success", image_id: img_id });
 
     } catch (err) {
@@ -51,3 +52,15 @@ export async function getCharacterImage(req: Request, res: Response): Promise<vo
     res.status(200).send(image.image_data);
 }
 
+export async function getCharacterImageThumbnail(req: Request, res: Response): Promise<void> {
+    const image_id: number = parseInt(req.params.id);
+    const image: CharacterImage = await new CharacterImage().findById(image_id);
+    if (!image.isValid()) {
+        console.log(image);
+        errorInvalidBody(res);
+        return;
+    }
+
+    res.setHeader('Content-Type', image.content_type);
+    res.status(200).send(image.thumbnail_data);
+}
