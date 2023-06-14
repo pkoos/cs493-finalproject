@@ -42,7 +42,7 @@ export class User extends DatabaseModel<User> {
 
     fromDatabase(data: any[]): User {
         const db_data: any = data[0];
-        
+
         this.id = db_data.id;
         this.name = db_data.name;
         this.email = db_data.email;
