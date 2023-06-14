@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import * as dotenv from 'dotenv';
 import mysql2, { Pool } from 'mysql2/promise';
 import { addUser, getUserDetails, loginUser } from './controllers/user-controller';
+import { addCharacterImage, getCharacterImage } from './controllers/character-image-controller';
 import { requireAuthentication } from './utils/auth-helper';
 import * as rh from './utils/responses-helper';
 
@@ -11,10 +12,14 @@ import { initializeRateLimiting, rateLimit } from './utils/rate-limit-helper';
 import { addRace, deleteRace, modifyRace } from './controllers/race-controller';
 import { addClass, deleteClass } from './controllers/character-class-controller';
 
+import multer from 'multer';
+
 const app: Express = express();
 const port = process.env.PORT ?? 8000;
 const baseApiPath: string = "/api/v1";
 
+const storage: multer.StorageEngine = multer.memoryStorage();
+const upload: multer.Multer = multer({ storage: storage });
 
 export const db: Pool =  mysql2.createPool({
     connectionLimit: 10,
@@ -85,11 +90,7 @@ const removeCharacterClassPath: string = `${baseApiPath}/class/remove/:id`;
 app.post(removeCharacterClassPath, requireAuthentication, (req: Request, res: Response) => deleteClass(req, res));
 
 const addCharacterImagePath: string = `${baseApiPath}/image/add`;
-app.post(addCharacterImagePath, (req: Request, res: Response) => {
-    rh.successResponse(res, {
-        "status": "addCharacterImagePath"
-    });
-});
+app.post(addCharacterImagePath, upload.single("characterImage"), addCharacterImage);
 
 const modifyCharacterImagePath: string = `${baseApiPath}/image/modify`;
 app.post(modifyCharacterImagePath, (req: Request, res: Response) => {
@@ -104,6 +105,9 @@ app.post(removeCharacterImagePath, (req: Request, res: Response) => {
         "status": "removeCharacterImagePath"
     });
 });
+
+const getCharacterImagePath: string = `${baseApiPath}/image/:id`;
+app.get(getCharacterImagePath, getCharacterImage);
 
 const addEquipmentPath: string = `${baseApiPath}/equipment/add`;
 app.post(addEquipmentPath, (req: Request, res: Response) => {
