@@ -16,9 +16,9 @@ async function generateThumbnail(message: amqp.ConsumeMessage | null): Promise<v
 
     channel.ack(message);
     const image_id: number = parseInt(message.content.toString());
-    const image: CharacterImage = await new CharacterImage().findById(image_id);
+    const image: CharacterImage | undefined = await new CharacterImage().findById(image_id);
 
-    if (!image.isValid()) {
+    if (image === undefined || !image.isValid()) {
         console.log(image);
         return;
     }
