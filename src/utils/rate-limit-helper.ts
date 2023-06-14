@@ -49,6 +49,10 @@ export async function initializeRateLimiting(): Promise<void> {
 }
 
 export async function rateLimit(req: Request, res: Response, next: NextFunction): Promise<void> {
+    if (rateLimitWindowMaxRequests <= 0) {
+        next();
+        return;
+    }
     try {
         const ip: string = String(req.ip);
 
