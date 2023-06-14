@@ -10,7 +10,7 @@ export async function addCharacterImage(req: Request, res: Response): Promise<vo
         return;
     }
 
-    if (req.body["pc_id"] === undefined) {
+    if (req.body["pc_id"] === undefined || req.body["pc_id"] < 0) {
         errorInvalidBody(res);
         return;
     }
@@ -41,7 +41,12 @@ export async function addCharacterImage(req: Request, res: Response): Promise<vo
 
 export async function getCharacterImage(req: Request, res: Response): Promise<void> {
     const image_id: number = parseInt(req.params.id);
-    const image: CharacterImage = await new CharacterImage().findById(image_id);
+    const image: CharacterImage | undefined = await new CharacterImage().findById(image_id);
+    if (image === undefined) {
+        console.log(`Invalid image id for getCharacterImage: ${image_id}`);
+        errorInvalidBody(res);
+        return;
+    }
     if (!image.isValid()) {
         console.log(image);
         errorInvalidBody(res);
