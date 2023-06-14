@@ -9,6 +9,7 @@ import * as rh from './utils/responses-helper';
 import { initializeAsyncController, requestTest } from './controllers/async-controller';
 import { initializeRateLimiting, rateLimit } from './utils/rate-limit-helper';
 import { addRace, deleteRace, modifyRace } from './controllers/race-controller';
+import { addClass, deleteClass } from './controllers/character-class-controller';
 
 const app: Express = express();
 const port = process.env.PORT ?? 8000;
@@ -71,11 +72,7 @@ const removeRacePath: string = `${baseApiPath}/race/remove/:id`;
 app.post(removeRacePath, requireAuthentication, (req: Request, res: Response) => deleteRace(req, res));
 
 const addCharacterClassPath: string = `${baseApiPath}/class/add`;
-app.post(addCharacterClassPath, (req: Request, res: Response) => {
-    rh.successResponse(res, {
-        "status": "addCharacterClassPath"
-    });
-});
+app.post(addCharacterClassPath, requireAuthentication,  (req: Request, res: Response) => addClass(req, res));
 
 const modifyCharacterClassPath: string = `${baseApiPath}/class/modify`;
 app.post(modifyCharacterClassPath, (req: Request, res: Response) => {
@@ -84,12 +81,8 @@ app.post(modifyCharacterClassPath, (req: Request, res: Response) => {
     });
 });
 
-const removeCharacterClassPath: string = `${baseApiPath}/class/remove`;
-app.post(removeCharacterClassPath, (req: Request, res: Response) => {
-    rh.successResponse(res, {
-        "status": "removeCharacterClassPath"
-    });
-});
+const removeCharacterClassPath: string = `${baseApiPath}/class/remove/:id`;
+app.post(removeCharacterClassPath, requireAuthentication, (req: Request, res: Response) => deleteClass(req, res));
 
 const addCharacterImagePath: string = `${baseApiPath}/image/add`;
 app.post(addCharacterImagePath, (req: Request, res: Response) => {
