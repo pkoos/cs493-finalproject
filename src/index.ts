@@ -11,6 +11,7 @@ import { initializeAsyncController, requestTest } from './controllers/async-cont
 import { initializeRateLimiting, rateLimit } from './utils/rate-limit-helper';
 import { addRace, deleteRace, modifyRace } from './controllers/race-controller';
 import { addClass, deleteClass } from './controllers/character-class-controller';
+import { generatePlayerCharacter } from './controllers/character-controller';
 
 import multer from 'multer';
 
@@ -51,6 +52,9 @@ app.post(addPlayerCharacterPath, (req: Request, res: Response) => {
         "status": "addPlayerCharacterPath"
     });
 });
+
+const generatePlayerCharacterPath: string = `${baseApiPath}/character/generate`;
+app.post(generatePlayerCharacterPath, requireAuthentication, generatePlayerCharacter);
 
 const modifyPlayerCharacterPath: string = `${baseApiPath}/character/modify`;
 app.post(modifyPlayerCharacterPath, (req: Request, res: Response) => {
@@ -180,8 +184,7 @@ async function initializeDatabase() {
         name VARCHAR(255) NOT NULL,
         hitpoints INT NOT NULL,
         background VARCHAR(1024),
-        alignment VARCHAR(64) NOT NULL,
-        image_id MEDIUMINT UNSIGNED NOT NULL)`;
+        alignment VARCHAR(64) NOT NULL)`;
     await db.query(createPlayerCharacterTable);
 
 
