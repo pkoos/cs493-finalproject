@@ -26,7 +26,8 @@ export abstract class DatabaseModel<T> {
 
     async insert(): Promise<number> {
         const [db_results] = await db.query(`INSERT INTO ${this.tableName} ${this.insertString()}`, this.insertParams());
-        return (db_results as ResultSetHeader).insertId;
+        this.id = (db_results as ResultSetHeader).insertId;
+        return this.id;
     }
 
     async findById(id: number): Promise<T> {
