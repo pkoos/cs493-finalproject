@@ -8,7 +8,7 @@ import * as rh from './utils/responses-helper';
 
 import { initializeAsyncController, requestTest } from './controllers/async-controller';
 import { initializeRateLimiting, rateLimit } from './utils/rate-limit-helper';
-import { addRace, modifyRace } from './controllers/race-controller';
+import { addRace, deleteRace, modifyRace } from './controllers/race-controller';
 
 const app: Express = express();
 const port = process.env.PORT ?? 8000;
@@ -67,12 +67,8 @@ app.post(addRacePath, requireAuthentication, (req: Request, res: Response) => ad
 const modifyRacePath: string = `${baseApiPath}/race/modify/:id`;
 app.post(modifyRacePath, requireAuthentication, (req: Request, res: Response) => modifyRace(req, res));
 
-const removeRacePath: string = `${baseApiPath}/race/remove`;
-app.post(removeRacePath, (req: Request, res: Response) => {
-    rh.successResponse(res, {
-        "status": "removeRacePath"
-    });
-});
+const removeRacePath: string = `${baseApiPath}/race/remove/:id`;
+app.post(removeRacePath, requireAuthentication, (req: Request, res: Response) => deleteRace(req, res));
 
 const addCharacterClassPath: string = `${baseApiPath}/class/add`;
 app.post(addCharacterClassPath, (req: Request, res: Response) => {

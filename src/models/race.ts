@@ -29,6 +29,7 @@ export class Race extends DatabaseModel<Race> {
 
         const race: Race = new Race({
             id: db_race.id,
+            owner_id: db_race.owner_id,
             name: db_race.name,
             stats_id: db_race.stats_id,
             description: db_race.description
