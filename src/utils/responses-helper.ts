@@ -20,6 +20,10 @@ export function errorNoRemove(res: Response, type: string) {
     genericErrorResponse(res, 401, `Cannot remove a ${type} you did not create.`);
 }
 
+export function errorUnauthorizedUser(res: Response, action: string) {
+    genericErrorResponse(res, 401, `User is unauthorized to ${action}.`);
+}
+
 export function errorInvalidBody(res: Response) {
     genericErrorResponse(res, 406, "Invalid request body.");
 }
@@ -52,4 +56,8 @@ export function errorInvalidToken(res: Response) {
 
 export function errorTooManyRequests(res: Response) {
     genericErrorResponse(res, 429, "Too many requests per minute.");
+}
+
+export function errorServer(res: Response) {
+    genericErrorResponse(res, 500, "Internal server error.");
 }
