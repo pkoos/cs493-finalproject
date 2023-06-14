@@ -159,7 +159,15 @@ app.get('/test/async/:message', (req: Request, res: Response) => {
     res.status(200).json({"status": "Success!"});
 });
 
-async function initializeDatabase() {
+async function initializeDatabase(freshStart: boolean) {
+    if(freshStart) {
+        const freshStartTables: string = 
+            `DROP TABLE IF EXISTS User, Player_Character, Race, Stats, Character_Class, 
+                Character_Image, Equipment_Type, Equipment`;
+            db.query(freshStartTables);
+    }
+
+
     const createUserTable: string =
     `CREATE TABLE IF NOT EXISTS User(
         id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -176,6 +184,7 @@ async function initializeDatabase() {
         class_id MEDIUMINT UNSIGNED NOT NULL,
         race_id MEDIUMINT UNSIGNED NOT NULL,
         hitpoints INT NOT NULL,
+        stats_id MEDIUMINT NOT NULL,
         background VARCHAR(1024),
         alignment VARCHAR(64) NOT NULL,
         image_id MEDIUMINT UNSIGNED NOT NULL)`;
@@ -184,26 +193,35 @@ async function initializeDatabase() {
     `CREATE TABLE IF NOT EXISTS Race(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
+        stats_id MEDIUMINT UNSIGNED NOT NULL,
         name VARCHAR(64) NOT NULL,
         description VARCHAR(1024) NOT NULL)`;
 
-    const createStatTable: string =
-    `CREATE TABLE IF NOT EXISTS Stat(
+    const createStatsTable: string =
+    `CREATE TABLE IF NOT EXISTS Stats(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(16) NOT NULL,
-        value INT NOT NULL)`;
+        type_id MEDIUMINT NOT NULL,
+        type_owner_id MEDIUMINT NOT NULL,
+        strength INT NOT NULL,
+        dexterity INT NOT NULL,
+        constitution INT NOT NULL,
+        intelligence INT NOT NULL,
+        wisdom INT NOT NULL,
+        charisma INT NOT NULL
+    )`;
 
     const createCharacterClassTable: string =
     `CREATE TABLE IF NOT EXISTS Character_Class(
-        ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
         name VARCHAR(64) NOT NULL,
+        stats_id MEDIUMINT NOT NULL,
         description VARCHAR(1024) NOT NULL,
         hit_die INT NOT NULL)`;
 
     const createCharacterImageTable: string =
     `CREATE TABLE IF NOT EXISTS Character_Image(
-        ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
         pc_id MEDIUMINT UNSIGNED NOT NULL,
         image_name VARCHAR(64) NOT NULL,
@@ -213,12 +231,12 @@ async function initializeDatabase() {
 
     const createEquipmentTypeTable: string =
     `CREATE TABLE IF NOT EXISTS Equipment_Type(
-        ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(64) NOT NULL)`;
 
     const createEquipmentTable: string =
     `CREATE TABLE IF NOT EXISTS Equipment(
-        ID MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
         name VARCHAR(64) NOT NULL,
         type MEDIUMINT NOT NULL,
@@ -228,7 +246,7 @@ async function initializeDatabase() {
     await db.query(createUserTable);
     await db.query(createPlayerCharacterTable);
     await db.query(createRaceTable);
-    await db.query(createStatTable);
+    await db.query(createStatsTable);
     await db.query(createCharacterClassTable);
     await db.query(createCharacterImageTable);
     await db.query(createEquipmentTypeTable);
@@ -236,7 +254,7 @@ async function initializeDatabase() {
 }
 
 async function initializeAPI() {
-    await initializeDatabase();
+    await initializeDatabase(false);
     await initializeAsyncController();
     await initializeRateLimiting();
 
