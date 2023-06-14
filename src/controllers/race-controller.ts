@@ -31,9 +31,7 @@ export async function modifyRace(req: Request, res: Response) {
 }
 
 export async function deleteRace(req: Request, res: Response) {
-    console.log(req.params);
     const raceToDelete: Race = await new Race().findById(parseInt(req.params.id)) ?? new Race();
-    console.log(raceToDelete);
     if(!raceToDelete.isValid()) {
         rh.errorNotFound(res, "Race");
         return;
