@@ -90,7 +90,7 @@ const removeCharacterClassPath: string = `${baseApiPath}/class/remove/:id`;
 app.post(removeCharacterClassPath, requireAuthentication, (req: Request, res: Response) => deleteClass(req, res));
 
 const addCharacterImagePath: string = `${baseApiPath}/image/add`;
-app.post(addCharacterImagePath, upload.single("characterImage"), addCharacterImage);
+app.post(addCharacterImagePath, requireAuthentication, upload.single("characterImage"), addCharacterImage);
 
 const modifyCharacterImagePath: string = `${baseApiPath}/image/modify`;
 app.post(modifyCharacterImagePath, (req: Request, res: Response) => {
@@ -151,11 +151,11 @@ app.get('/test/async/:message', (req: Request, res: Response) => {
 
 async function initializeDatabase() {
     const freshStart: boolean = JSON.parse(process.env.FRESH_START as string) ?? false;
-    
+
     if(freshStart) {
         console.log(`Dropping existing database tables`);
-        const freshStartTables: string = 
-            `DROP TABLE IF EXISTS User, Player_Character, Race, Stats, Character_Class, 
+        const freshStartTables: string =
+            `DROP TABLE IF EXISTS User, Player_Character, Race, Stats, Character_Class,
                 Character_Image, Equipment_Type, Equipment`;
         await db.query(freshStartTables);
     }
@@ -169,7 +169,7 @@ async function initializeDatabase() {
         password VARCHAR(60) NOT NULL,
         type VARCHAR(10) NOT NULL)`;
     await db.query(createUserTable);
-    
+
     const createPlayerCharacterTable: string =
     `CREATE TABLE IF NOT EXISTS Player_Character(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
