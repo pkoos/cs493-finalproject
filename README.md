@@ -48,6 +48,24 @@ docker run --rm -it --network chargen-net mysql mysql -h chargen-mysql-server -u
 
 Unless stated, the given endpoints require authentication.
 
+### `/class/add`
+```
+{
+    "name": "Fighter",
+    "stats": {
+        "strength": 2,
+        "dexterity": 0,
+        "constitution": 2,
+        "intelligence": 0,
+        "wisdom": 0,
+        "charisma": 0
+    },
+    "description": "Fighters learn the basics of all combat styles. Every fighter can swing an axe, fence with a rapier, wield a longsword or a greatsword, use a bow, and even trap foes in a net with some degree of skill.",
+    "hit_die": 10
+}
+```
+
+### `/class/remove/:id` - No body required.
 ### `/race/add`
 
 ```
@@ -64,7 +82,7 @@ Unless stated, the given endpoints require authentication.
     "description": "As a high elf, you have a keen mind and a mastery of at least the basics of magic."
 }
 ```
-
+### `/race/remove/:id` - No body required.
 ### `/user/add` - Does not require authentication
 
 ```
