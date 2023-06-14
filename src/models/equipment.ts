@@ -2,6 +2,7 @@ import { DatabaseModel } from "./database-model";
 
 export class Equipment extends DatabaseModel<Equipment> {
     id: number = -1;
+    owner_id: number = -1;
     name: string ="";
     equipment_type: number = -1;
     description: string = "";
@@ -15,6 +16,7 @@ export class Equipment extends DatabaseModel<Equipment> {
 
     isValid(): boolean {
         const valid: boolean = 
+            this.owner_id != undefined && this.owner_id != -1 &&
             this.name != undefined && this.name != "" &&
             this.equipment_type != undefined && this.equipment_type != -1 &&
             this.description != undefined && this.description != "" &&
@@ -28,6 +30,7 @@ export class Equipment extends DatabaseModel<Equipment> {
 
         const equipment: Equipment = new Equipment({
             id: db_equipment.id,
+            owner_id: db_equipment.owner_id,
             name: db_equipment.name,
             equipment_type: db_equipment.equipment_type,
             description: db_equipment.description,
@@ -38,14 +41,14 @@ export class Equipment extends DatabaseModel<Equipment> {
     }
 
     insertParams(): any[] {
-        return [this.name, this.equipment_type, this.description, this.cost];
+        return [this.owner_id, this.name, this.equipment_type, this.description, this.cost];
     }
 
     insertString(): string {
-        return `(name, equipment_type, description, cost) VALUES(?, ?, ?, ?)`;
+        return `(owner_id, name, equipment_type, description, cost) VALUES(?, ?, ?, ?, ?)`;
     }
 
     updateString(): string {
-        return `name=?, equipment_type=?, description=?, cost=?`;
+        return `owner_id=?, name=?, equipment_type=?, description=?, cost=?`;
     }
 }

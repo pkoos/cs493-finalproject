@@ -174,11 +174,11 @@ async function initializeDatabase() {
     `CREATE TABLE IF NOT EXISTS Player_Character(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         owner_id MEDIUMINT UNSIGNED NOT NULL,
-        name VARCHAR(255) NOT NULL,
         class_id MEDIUMINT UNSIGNED NOT NULL,
         race_id MEDIUMINT UNSIGNED NOT NULL,
-        hitpoints INT NOT NULL,
         stats_id MEDIUMINT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        hitpoints INT NOT NULL,
         background VARCHAR(1024),
         alignment VARCHAR(64) NOT NULL,
         image_id MEDIUMINT UNSIGNED NOT NULL)`;
