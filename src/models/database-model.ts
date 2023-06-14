@@ -30,12 +30,15 @@ export abstract class DatabaseModel<T> {
         return this.id;
     }
 
-    async findById(id: number): Promise<T> {
+    async findById(id: number): Promise<T | undefined> {
         const [db_results] = await db.query(`SELECT * FROM ${this.tableName} WHERE id=?`, [id]);
+        if(!((db_results as any[]).length > 0)) {
+            return;
+        }
         return this.fromDatabase(db_results as any[]);
     }
 
-    async search(queryString: string, params: any[]): Promise<T> {
+    async search(queryString: string, params: any[]): Promise<T | undefined> {
         const [db_results] = await db.query(`SELECT * FROM ${this.tableName} WHERE ${queryString}`, params);
         return this.fromDatabase(db_results as any[]);
     }

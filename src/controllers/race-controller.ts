@@ -23,3 +23,9 @@ export async function addRace(req: Request, res: Response) {
     
     rh.successResponse(res, {"race": newRace.responseJson(newStats)});
 }
+
+export async function modifyRace(req: Request, res: Response) {
+    console.log(`params id: ${req.params.id}`);
+
+    rh.successResponse(res, {});
+}
