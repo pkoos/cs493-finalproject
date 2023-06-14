@@ -8,6 +8,7 @@ import * as rh from './utils/responses-helper';
 
 import { initializeAsyncController, requestTest } from './controllers/async-controller';
 import { initializeRateLimiting, rateLimit } from './utils/rate-limit-helper';
+import { addRace } from './controllers/race-controller';
 
 const app: Express = express();
 const port = process.env.PORT ?? 8000;
@@ -61,11 +62,7 @@ app.post(deletePlayerCharacterPath, (req: Request, res: Response) => {
 
 
 const addRacePath: string = `${baseApiPath}/race/add`;
-app.post(addRacePath, (req: Request, res: Response) => {
-    rh.successResponse(res, {
-        "status": "addRacePath"
-    });
-});
+app.post(addRacePath, requireAuthentication, (req: Request, res: Response) => addRace(req, res));
 
 const modifyRacePath: string = `${baseApiPath}/race/modify`;
 app.post(modifyRacePath, (req: Request, res: Response) => {
@@ -208,7 +205,7 @@ async function initializeDatabase() {
     `CREATE TABLE IF NOT EXISTS Stats(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         type_id MEDIUMINT NOT NULL,
-        type_owner_id MEDIUMINT NOT NULL,
+        type_owner_id MEDIUMINT,
         strength INT NOT NULL,
         dexterity INT NOT NULL,
         constitution INT NOT NULL,

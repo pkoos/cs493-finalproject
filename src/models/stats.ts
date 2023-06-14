@@ -4,7 +4,7 @@ export class Stats extends DatabaseModel<Stats> {
 
     id: number = -1;
     type_id: number = -1;
-    type_owner_id: number = -1;
+    type_owner_id?: number = -1;
     strength: number = -1;
     dexterity: number = -1;
     constitution: number = -1;
@@ -22,7 +22,6 @@ export class Stats extends DatabaseModel<Stats> {
         const valid: boolean =
             this.id != undefined && this.id != -1 &&
             this.type_id != undefined && this.type_id != -1 &&
-            this.type_owner_id != undefined && this.type_owner_id != -1 &&
             this.strength != undefined && this.strength != -1 &&
             this.dexterity != undefined && this.dexterity != -1 &&
             this.constitution != undefined && this.constitution != -1 &&
@@ -63,4 +62,24 @@ export class Stats extends DatabaseModel<Stats> {
         return `type_id=?, type_owner_id=?, strength=?, dexterity=?, constitution=?, intelligence=?, wisdom=?, charisma=?`;
     }
 
+    toResponseObject() {
+        return {
+            stats: {
+                strength: this.strength,
+                dexterity: this.dexterity,
+                constitution: this.constitution,
+                intelligence: this.intelligence,
+                wisdom: this.wisdom,
+                charisma: this.charisma
+            }
+            
+        }
+    }
+
+}
+
+export enum StatsType {
+    Character = 1,
+    Race,
+    Class
 }

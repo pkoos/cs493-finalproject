@@ -3,7 +3,7 @@ import { db } from "..";
 
 export abstract class DatabaseModel<T> {
     id: number = -1;
-    abstract tableName: string;
+    abstract tableName?: string;
 
     abstract isValid(): boolean;
     abstract fromDatabase(data: any[]): T;
