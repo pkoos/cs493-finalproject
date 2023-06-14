@@ -8,7 +8,6 @@ import * as rh from './utils/responses-helper';
 
 import { initializeAsyncController, requestTest } from './controllers/async-controller';
 import { initializeRateLimiting, rateLimit } from './utils/rate-limit-helper';
-import { Stats } from './models/stats';
 
 const app: Express = express();
 const port = process.env.PORT ?? 8000;
@@ -160,18 +159,9 @@ app.get('/test/async/:message', (req: Request, res: Response) => {
     res.status(200).json({"status": "Success!"});
 });
 
-async function testStuffAndThings() {
-    console.log(`testing stuff and things`);
-    const new_stats: Stats = new Stats();
-    const new_id: number = await new_stats.insert();
 
-    new_stats.id = new_id;
-    new_stats.type_id = 420;
-    const updateSucceeded: boolean = await new_stats.update();
-    console.log(`did update succeed? ${updateSucceeded}`);
-}
-
-async function initializeDatabase(freshStart: boolean) {
+async function initializeDatabase() {
+    const freshStart: boolean = process.env.FRESH_START as unknown as boolean ?? false;
     if(freshStart) {
         const freshStartTables: string = 
             `DROP TABLE IF EXISTS User, Player_Character, Race, Stats, Character_Class, 
@@ -187,7 +177,8 @@ async function initializeDatabase(freshStart: boolean) {
         email VARCHAR(255) NOT NULL,
         password VARCHAR(60) NOT NULL,
         type VARCHAR(10) NOT NULL)`;
-
+    await db.query(createUserTable);
+    
     const createPlayerCharacterTable: string =
     `CREATE TABLE IF NOT EXISTS Player_Character(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -200,6 +191,8 @@ async function initializeDatabase(freshStart: boolean) {
         background VARCHAR(1024),
         alignment VARCHAR(64) NOT NULL,
         image_id MEDIUMINT UNSIGNED NOT NULL)`;
+    await db.query(createPlayerCharacterTable);
+
 
     const createRaceTable: string =
     `CREATE TABLE IF NOT EXISTS Race(
@@ -208,6 +201,8 @@ async function initializeDatabase(freshStart: boolean) {
         stats_id MEDIUMINT UNSIGNED NOT NULL,
         name VARCHAR(64) NOT NULL,
         description VARCHAR(1024) NOT NULL)`;
+    await db.query(createRaceTable);
+
 
     const createStatsTable: string =
     `CREATE TABLE IF NOT EXISTS Stats(
@@ -219,8 +214,8 @@ async function initializeDatabase(freshStart: boolean) {
         constitution INT NOT NULL,
         intelligence INT NOT NULL,
         wisdom INT NOT NULL,
-        charisma INT NOT NULL
-    )`;
+        charisma INT NOT NULL)`;
+    await db.query(createStatsTable);
 
     const createCharacterClassTable: string =
     `CREATE TABLE IF NOT EXISTS Character_Class(
@@ -230,6 +225,7 @@ async function initializeDatabase(freshStart: boolean) {
         stats_id MEDIUMINT NOT NULL,
         description VARCHAR(1024) NOT NULL,
         hit_die INT NOT NULL)`;
+    await db.query(createCharacterClassTable);
 
     const createCharacterImageTable: string =
     `CREATE TABLE IF NOT EXISTS Character_Image(
@@ -240,11 +236,14 @@ async function initializeDatabase(freshStart: boolean) {
         content_type VARCHAR(16) NOT NULL,
         image_data MEDIUMBLOB,
         thumbnail_data MEDIUMBLOB)`;
+    await db.query(createCharacterImageTable);
+
 
     const createEquipmentTypeTable: string =
     `CREATE TABLE IF NOT EXISTS Equipment_Type(
         id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(64) NOT NULL)`;
+    await db.query(createEquipmentTypeTable);
 
     const createEquipmentTable: string =
     `CREATE TABLE IF NOT EXISTS Equipment(
@@ -254,26 +253,17 @@ async function initializeDatabase(freshStart: boolean) {
         type MEDIUMINT NOT NULL,
         description VARCHAR(1024) NOT NULL,
         cost INT UNSIGNED NOT NULL)`;
-
-    await db.query(createUserTable);
-    await db.query(createPlayerCharacterTable);
-    await db.query(createRaceTable);
-    await db.query(createStatsTable);
-    await db.query(createCharacterClassTable);
-    await db.query(createCharacterImageTable);
-    await db.query(createEquipmentTypeTable);
     await db.query(createEquipmentTable);
 }
 
 async function initializeAPI() {
-    await initializeDatabase(true);
+    await initializeDatabase();
     await initializeAsyncController();
     await initializeRateLimiting();
 
     app.listen(port, () => {
         console.log(`⚡️[server]: Server is running at http://localhost:${port}.`);
     });
-    await testStuffAndThings();
 }
 
 initializeAPI();
