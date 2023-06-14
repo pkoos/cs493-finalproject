@@ -29,7 +29,7 @@ export class CharacterImage extends DatabaseModel<CharacterImage> {
     fromDatabase(data: any[]): CharacterImage {
         const db_image: any = data[0];
         const image: CharacterImage = new CharacterImage({
-            id: db_image.id,
+            id: db_image.id ?? db_image.ID,
             owner_id: db_image.owner_id,
             pc_id: db_image.pc_id,
             image_name: db_image.image_name,
