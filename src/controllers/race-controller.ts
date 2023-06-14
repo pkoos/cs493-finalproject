@@ -29,3 +29,27 @@ export async function modifyRace(req: Request, res: Response) {
 
     rh.successResponse(res, {});
 }
+
+export async function deleteRace(req: Request, res: Response) {
+    console.log(req.params);
+    const raceToDelete: Race = await new Race().findById(parseInt(req.params.id)) ?? new Race();
+    console.log(raceToDelete);
+    if(!raceToDelete.isValid()) {
+        rh.errorNotFound(res, "Race");
+        return;
+    }
+
+    if(req.loggedInID != raceToDelete.owner_id) {
+        rh.errorNoRemove(res, "Race");
+        return;
+    }
+    const statsToDelete: Stats = await new Stats().findById(raceToDelete.stats_id as number) as Stats;
+
+    await statsToDelete.delete();
+    await raceToDelete.delete();
+
+    rh.successResponse(res, {
+        "message": "Race has been deleted.", 
+        "race": raceToDelete.responseJson(statsToDelete),
+    });
+}

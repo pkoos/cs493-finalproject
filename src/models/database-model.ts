@@ -42,4 +42,9 @@ export abstract class DatabaseModel<T> {
         const [db_results] = await db.query(`SELECT * FROM ${this.tableName} WHERE ${queryString}`, params);
         return this.fromDatabase(db_results as any[]);
     }
+
+    async delete() {
+        const [db_results] = await db.query(`DELETE FROM ${this.tableName} WHERE id=?`, this.id);
+        return this;
+    }
 }
