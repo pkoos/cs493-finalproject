@@ -53,3 +53,7 @@ export function errorInvalidToken(res: Response) {
 export function errorTooManyRequests(res: Response) {
     genericErrorResponse(res, 429, "Too many requests per minute.");
 }
+
+export function errorServer(res: Response) {
+    genericErrorResponse(res, 500, "Internal server error.");
+}
