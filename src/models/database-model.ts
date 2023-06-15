@@ -1,6 +1,10 @@
 import { ResultSetHeader } from "mysql2/promise";
 import { db } from "..";
 
+export interface CsvGeneration {
+    toCSV(): string;
+}
+
 export abstract class DatabaseModel<T> {
     id: number = -1;
     abstract tableName?: string;
