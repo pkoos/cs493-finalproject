@@ -1,13 +1,14 @@
 This is the starting point for the final project of Cloud Application Development.
 
-## Commands to run the server
+## For Development
+
+* I created a docker container that holds a development database, which is easy to run and use with the auto-reload command above. Here is the command to build and run the server and network:
+### Commands to run the server
 
 * `npm start`: This will build the typescript and run the server.
 * `npm run start:dev`: This will run the server in automatic reload mode. This means that changes to any `.js`/`.ts` file will reload the server.
 
-## For Development
 
-* I created a docker container that holds a development database, which is easy to run and use with the auto-reload command above. Here is the command to build and run the server and network:
 
 ### Create the network and build the docker container:
 ```
@@ -100,6 +101,24 @@ Unless stated, the given endpoints require authentication.
     "id": 1,
     "password": "password1234"
 }
+```
+## Using the `docker-compose.yml` file
+* There are several environment variables required by the container.
+
+### Environment Variables
+```
+# The first three are user-configurable
+
+MYSQL_USER=chargen-user
+MYSQL_PASSWORD=asdfqwer1234
+MYSQL_DATABASE=chargen
+
+# The last three are used within the docker-compose file,
+# do not change unless you know what you're doing.
+
+MYSQL_HOST=db
+RABBITMQ_HOST=rmq
+REDIS_HOST=redis
 ```
 ## Resources
 
