@@ -55,16 +55,12 @@ export async function deleteRace(req: Request, res: Response) {
 
 export async function exportRaces(req: Request, res: Response) {
     const [db_results] = await db.query("SELECT * FROM Race");
-    console.log(`number of results: ${(db_results as any[]).length}`);
-    console.log(db_results as any);
     const working_results: any[] = db_results as any[];
     const racesCSV: string[] = [];
     racesCSV.push(new Race().csvHeader());
     working_results.forEach((element) => {
-        console.log(element);
         const db_race: Race = new Race(element);
         racesCSV.push(db_race.toCSV());
     })
-    console.log(racesCSV);
     rh.successCSV(res, racesCSV.join('\n'));
 }
