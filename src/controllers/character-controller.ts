@@ -3,7 +3,7 @@ import { Character } from '../models/character';
 import { CharacterClass } from '../models/character-class';
 import { Race } from '../models/race';
 import { addCharacterImageToDatabase } from './character-image-controller';
-import { errorInvalidBody, successResponse } from '../utils/responses-helper';
+import { errorInvalidBody, errorServer, successResponse } from '../utils/responses-helper';
 import { generate_dice_roll } from '../utils/number-generation';
 import { requestCharacterDescription } from './async-controller';
 import { Stats, StatsType } from '../models/stats';
@@ -74,6 +74,39 @@ export async function generatePlayerCharacter(req: Request, res: Response) {
                 "charisma": raw_stats.charisma,
             },
             alignment: playerCharacter.alignment
+        }
+    });
+}
+
+export async function getPlayerCharacter(req: Request, res: Response) {
+    const pc_id: number = parseInt(req.params.id);
+    const playerCharacter: Character | undefined = await new Character().findById(pc_id);
+
+    if (playerCharacter === undefined || !playerCharacter.isValid()) {
+        console.log(`Invalid character_id passed: ${pc_id}`);
+        errorInvalidBody(res);
+        return;
+    }
+
+    const stats: Stats | undefined = await new Stats().findById(playerCharacter.stats_id);
+
+    if (stats === undefined || !stats.isValid()) {
+        console.log(`Invalid stats_id passed: ${playerCharacter.stats_id}`);
+        errorServer(res);
+        return;
+    }
+
+    successResponse(res, {
+        "status": "success",
+        "character": {
+            "id": playerCharacter.id,
+            "name": playerCharacter.name,
+            "class_id": playerCharacter.class_id,
+            "race_id": playerCharacter.race_id,
+            "hitpoints": playerCharacter.hitpoints,
+            "alignment": playerCharacter.alignment,
+            "background": playerCharacter.background,
+            ...(stats.toResponseObject())
         }
     });
 }
