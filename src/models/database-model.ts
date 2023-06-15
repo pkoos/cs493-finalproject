@@ -3,6 +3,7 @@ import { db } from "..";
 
 export interface CsvGeneration {
     toCSV(): string;
+    csvHeader(): string;
 }
 
 export abstract class DatabaseModel<T> {

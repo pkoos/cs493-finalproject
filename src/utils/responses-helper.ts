@@ -61,3 +61,9 @@ export function errorTooManyRequests(res: Response) {
 export function errorServer(res: Response) {
     genericErrorResponse(res, 500, "Internal server error.");
 }
+
+export function successCSV(res: Response, csv: any) {
+    res.status(200);
+    res.contentType("text/csv");
+    res.send(csv);
+}

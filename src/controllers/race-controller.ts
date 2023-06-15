@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Race } from "../models/race";
 import { Stats, StatsType } from "../models/stats";
 import * as rh from "../utils/responses-helper";
+import { db } from "..";
 
 export async function addRace(req: Request, res: Response) {
     const newStats: Stats = new Stats(req.body.stats);
@@ -50,4 +51,20 @@ export async function deleteRace(req: Request, res: Response) {
         "message": "Race has been deleted.", 
         "race": raceToDelete.responseJson(statsToDelete),
     });
+}
+
+export async function exportRaces(req: Request, res: Response) {
+    const [db_results] = await db.query("SELECT * FROM Race");
+    console.log(`number of results: ${(db_results as any[]).length}`);
+    console.log(db_results as any);
+    const working_results: any[] = db_results as any[];
+    const racesCSV: string[] = [];
+    racesCSV.push(new Race().csvHeader());
+    working_results.forEach((element) => {
+        console.log(element);
+        const db_race: Race = new Race(element);
+        racesCSV.push(db_race.toCSV());
+    })
+    console.log(racesCSV);
+    rh.successCSV(res, racesCSV.join('\n'));
 }

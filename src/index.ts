@@ -9,7 +9,7 @@ import * as rh from './utils/responses-helper';
 
 import { initializeAsyncController, requestTest, requestCharacterDescription } from './controllers/async-controller';
 import { initializeRateLimiting, rateLimit } from './utils/rate-limit-helper';
-import { addRace, deleteRace, modifyRace } from './controllers/race-controller';
+import { addRace, deleteRace, modifyRace, exportRaces } from './controllers/race-controller';
 import { addClass, deleteClass } from './controllers/character-class-controller';
 import { generatePlayerCharacter, getPlayerCharacters } from './controllers/character-controller';
 
@@ -88,6 +88,9 @@ app.post(modifyRacePath, requireAuthentication, (req: Request, res: Response) =>
 
 const removeRacePath: string = `${baseApiPath}/race/remove/:id`;
 app.post(removeRacePath, requireAuthentication, (req: Request, res: Response) => deleteRace(req, res));
+
+const exportRacePath: string = `${baseApiPath}/races/export`;
+app.get(exportRacePath, requireAuthentication, exportRaces);
 
 const addCharacterClassPath: string = `${baseApiPath}/class/add`;
 app.post(addCharacterClassPath, requireAuthentication,  (req: Request, res: Response) => addClass(req, res));

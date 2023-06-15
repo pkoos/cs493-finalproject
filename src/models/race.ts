@@ -1,7 +1,7 @@
 import { Stats } from "./stats";
-import { DatabaseModel } from "./database-model";
+import { CsvGeneration, DatabaseModel } from "./database-model";
 
-export class Race extends DatabaseModel<Race> {
+export class Race extends DatabaseModel<Race> implements CsvGeneration {
     id: number = -1;
     owner_id: number = -1;
     stats_id?: number = -1;
@@ -12,6 +12,13 @@ export class Race extends DatabaseModel<Race> {
     public constructor(init?: Partial<Race>) {
         super();
         Object.assign(this, init);
+    }
+
+    csvHeader(): string {
+        return `id,owner_id,stats_id,name,description`;
+    }
+    toCSV(): string {
+        return `${this.id},${this.owner_id},${this.stats_id},"${this.name}","${this.description}"`;
     }
 
     isValid(): boolean {
