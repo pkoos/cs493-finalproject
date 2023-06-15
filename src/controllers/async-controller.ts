@@ -2,9 +2,12 @@ import { Request, Response } from 'express';
 import amqp from 'amqplib';
 import Jimp from 'jimp';
 
+import { Character } from '../models/character';
+import { CharacterClass } from '../models/character-class';
 import { CharacterImage } from '../models/character-image';
+import { Stats } from '../models/stats';
+import { Race } from '../models/race';
 
-import { generate_dice_roll } from '../utils/number-generation';
 import { successResponse } from '../utils/responses-helper';
 
 import { Configuration, OpenAIApi } from "openai";
@@ -59,21 +62,64 @@ async function generateCharacterDescription(message: amqp.ConsumeMessage | null)
 
     const pc_id: number = parseInt(message.content.toString());
 
-    const str: number = generate_dice_roll(3, 6);
-    const dex: number = generate_dice_roll(3, 6);
-    const con: number = generate_dice_roll(3, 6);
-    const int: number = generate_dice_roll(3, 6);
-    const wis: number = generate_dice_roll(3, 6);
-    const cha: number = generate_dice_roll(3, 6);
+    const pc: Character | undefined = await new Character().findById(pc_id);
+
+    if (pc === undefined || !pc.isValid()) {
+        console.log(`Unable to locate character so unable to generate background for ${pc_id}`);
+        return;
+    }
+
+    const race: Race | undefined  = await new Race().findById(pc.race_id);
+    const characterClass: CharacterClass | undefined = await new CharacterClass().findById(pc.class_id);
+
+    let racePrompt: string;
+
+    if (race === undefined || !race.isValid()) {
+        console.log(`Unable to locate race for character ${pc_id}. Generating background without it.`);
+        racePrompt = "";
+    } else {
+        racePrompt = race.name;
+    }
+
+    let classPrompt: string;
+
+    if (characterClass === undefined || !characterClass.isValid()) {
+        console.log(`Unable to locate class for character ${pc_id}. Generating background without it.`);
+        classPrompt = "hero";
+    } else {
+        classPrompt = characterClass.name;
+    }
+
+    const pc_stats: Stats | undefined = await new Stats().findById(pc.stats_id);
+
+    let statsPrompt: string;
+    if (pc_stats === undefined || !pc_stats.isValid()) {
+        console.log(`Unable to locate stats for character ${pc_id} with stats id ${pc.stats_id}. Generating background without stats info.`);
+        statsPrompt = "";
+    } else {
+        statsPrompt = ` with a ${pc_stats.strength} strength, ${pc_stats.dexterity} dexterity, ${pc_stats.constitution} constitution, ${pc_stats.intelligence} intelligence, ${pc_stats.wisdom} wisdom, and ${pc_stats.charisma} charisma`;
+    }
+
+    const prompt: string = `Generate a short character background for a ${pc.alignment} ${racePrompt} ${classPrompt} called ${pc.name}${statsPrompt}.`;
 
     const completion = await openai.createChatCompletion({
         model: "gpt-3.5-turbo",
         messages: [
             {"role": "system", "content": "You are a fantastic bard who produces epic stories of heroes."},
-            {role: "user", content: `Generate a short character description of a barbarian with a ${str} strength, ${dex} dexterity, ${con} constitution, ${int} intelligence, ${wis} wisdom, and ${cha} charisma.`}
+            {role: "user", content: prompt}
         ],
     });
-    console.log(completion.data.choices[0].message?.content);
+
+    pc.background = completion.data.choices[0].message?.content ?? "";
+    if (pc.background == "") {
+        console.log(`Unable to generate background for ${pc_id} due to OpenAI not returning content.`);
+    } else {
+        console.log(`Generated background for ${pc_id}: ${pc.background}`);
+    }
+
+    if (!await pc.update()) {
+        console.log(`Update failed for generated background for ${pc_id}`);
+    }
 }
 
 export async function initializeAsyncController() {
@@ -94,8 +140,6 @@ export async function requestImageThumbnail(image_id: number): Promise<void> {
     channel.sendToQueue('thumbnailQueue', Buffer.from(image_id.toString()));
 }
 
-export function requestCharacterDescription(req: Request, res: Response) {
-    const pc_id: number = parseInt(req.params.pc_id);
+export function requestCharacterDescription(pc_id: number) {
     channel.sendToQueue('characterDescriptionQueue', Buffer.from(pc_id.toString()));
-    successResponse(res, {pc_id: pc_id});
 }
