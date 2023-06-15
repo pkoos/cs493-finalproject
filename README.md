@@ -60,6 +60,8 @@ Unless stated, the given endpoints require authentication.
 }
 ```
 
+An `image` field can be used in a multipart form to upload a character image as well.
+
 ### `/class/add`
 ```
 {

@@ -5,6 +5,27 @@ import { requestImageThumbnail } from './async-controller';
 import { errorServer, errorInvalidBody, successResponse, errorUnauthorizedUser } from '../utils/responses-helper';
 import { Character } from '../models/character';
 
+export async function addCharacterImageToDatabase(file: Express.Multer.File, pc_id: number, owner_id: number): Promise<number> {
+    try {
+        const image: CharacterImage = new CharacterImage({
+            owner_id: owner_id,
+            pc_id: pc_id,
+            image_name: file.originalname,
+            content_type: file.mimetype,
+            image_data: file.buffer,
+            thumbnail_data: null
+        });
+
+        // send it to the database
+        const img_id: number = await image.insert();
+        requestImageThumbnail(img_id);
+        return img_id;
+    } catch (err) {
+        console.log(err);
+        return -1;
+    }
+}
+
 export async function addCharacterImage(req: Request, res: Response): Promise<void> {
     if (req.file === undefined) {
         errorInvalidBody(res);
@@ -28,27 +49,11 @@ export async function addCharacterImage(req: Request, res: Response): Promise<vo
         return;
     }
 
-    // create an image object
-    const file: Express.Multer.File = req.file;
-    try {
-        const image: CharacterImage = new CharacterImage({
-            owner_id: req.loggedInID,
-            pc_id: req.body["pc_id"],
-            image_name: file.originalname,
-            content_type: file.mimetype,
-            image_data: file.buffer,
-            thumbnail_data: null
-        });
-
-        // send it to the database
-        const img_id: number = await image.insert();
-        requestImageThumbnail(img_id);
-        successResponse(res, { status: "success", image_id: img_id });
-
-    } catch (err) {
-        console.log(err);
+    const img_id: number = await addCharacterImageToDatabase(req.file, req.body["pc_id"], req.loggedInID);
+    if (img_id === -1) {
         errorServer(res);
-        return;
+    } else {
+        successResponse(res, { status: "success", image_id: img_id });
     }
 }
 

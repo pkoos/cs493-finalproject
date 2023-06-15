@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Character } from '../models/character';
 import { CharacterClass } from '../models/character-class';
 import { Race } from '../models/race';
+import { addCharacterImageToDatabase } from './character-image-controller';
 import { errorInvalidBody, successResponse } from '../utils/responses-helper';
 import { generate_dice_roll } from '../utils/number-generation';
 import { requestCharacterDescription } from './async-controller';
@@ -51,6 +52,10 @@ export async function generatePlayerCharacter(req: Request, res: Response) {
     const character_id: number = await playerCharacter.insert();
 
     requestCharacterDescription(playerCharacter.id);
+
+    if (req.file !== undefined && req.loggedInID !== undefined) {
+        await addCharacterImageToDatabase(req.file, playerCharacter.id, req.loggedInID);
+    }
 
     successResponse(res, {
         "status": "success",
