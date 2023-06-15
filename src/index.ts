@@ -11,7 +11,7 @@ import { initializeAsyncController, requestTest, requestCharacterDescription } f
 import { initializeRateLimiting, rateLimit } from './utils/rate-limit-helper';
 import { addRace, deleteRace, modifyRace, exportRaces } from './controllers/race-controller';
 import { addClass, deleteClass } from './controllers/character-class-controller';
-import { generatePlayerCharacter, getPlayerCharacters } from './controllers/character-controller';
+import { generatePlayerCharacter, getPlayerCharacters, getPlayerCharacter } from './controllers/character-controller';
 
 import multer from 'multer';
 
@@ -53,6 +53,9 @@ app.post(addPlayerCharacterPath, (req: Request, res: Response) => {
         "status": "addPlayerCharacterPath"
     });
 });
+
+const getPlayerCharacterPath: string = `${baseApiPath}/character/:id`;
+app.get(getPlayerCharacterPath, requireAuthentication, getPlayerCharacter);
 
 const generatePlayerCharacterPath: string = `${baseApiPath}/character/generate`;
 app.post(generatePlayerCharacterPath, requireAuthentication, upload.single("image"), generatePlayerCharacter);
