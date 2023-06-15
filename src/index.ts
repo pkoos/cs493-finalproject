@@ -55,7 +55,7 @@ app.post(addPlayerCharacterPath, (req: Request, res: Response) => {
 });
 
 const generatePlayerCharacterPath: string = `${baseApiPath}/character/generate`;
-app.post(generatePlayerCharacterPath, requireAuthentication, generatePlayerCharacter);
+app.post(generatePlayerCharacterPath, requireAuthentication, upload.single("image"), generatePlayerCharacter);
 
 const modifyPlayerCharacterPath: string = `${baseApiPath}/character/modify`;
 app.post(modifyPlayerCharacterPath, (req: Request, res: Response) => {
