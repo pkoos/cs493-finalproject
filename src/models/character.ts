@@ -1,4 +1,6 @@
 import { DatabaseModel } from './database-model';
+import { Stats } from './stats';
+import { db } from "..";
 
 export class Character extends DatabaseModel<Character> {
     id: number = -1;
@@ -60,5 +62,47 @@ export class Character extends DatabaseModel<Character> {
     updateString(): string {
         return `owner_id=?, name=?, class_id=?, race_id=?, hitpoints=?, stats_id=?,
             background=?, alignment=?`
+    }
+
+    async getPaginatedList(page: number, itemsPerPage: number) {
+        let countString: string = `SELECT COUNT(*) AS count FROM ${this.tableName}`;
+        let [count_results] = await db.query(countString);
+        const max_page: number = Math.ceil((count_results as any)[0].count / itemsPerPage);
+        page = page > max_page ? max_page : page;
+        page = page < 1 ? 1 : page;
+
+        const stats: Stats = new Stats();
+
+        const queryString: string = `SELECT ${this.tableName}.id, name, class_id, race_id, hitpoints, background, alignment, strength, dexterity, constitution, intelligence, wisdom, charisma FROM ${this.tableName}, ${stats.tableName} WHERE ${this.tableName}.stats_id = ${stats.tableName}.id ORDER BY ${this.tableName}.id LIMIT ? OFFSET ?`;
+        const offset: number = itemsPerPage * (page - 1);
+
+        let [rawResults]: any[] = await db.query(queryString, [itemsPerPage, offset]);
+
+        const results = rawResults.map((result: any) => { return {
+            id: result.id,
+            owner_id: result.owner_id,
+            name: result.name,
+            class_id: result.class_id,
+            race_id: result.race_id,
+            hitpoints: result.hitpoints,
+            stats_id: result.stats_id,
+            background: result.background,
+            alignment: result.alignment,
+            stats: {
+                strength: result.strength,
+                dexterity: result.dexterity,
+                constitution: result.constitution,
+                intelligence: result.intelligence,
+                wisdom: result.wisdom,
+                charisma: result.charisma
+            }
+        }});
+
+        return {
+            "current_page": page,
+            "last_page": max_page,
+            "page_size": itemsPerPage,
+            "characters": results
+        }
     }
 }

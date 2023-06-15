@@ -77,3 +77,8 @@ export async function generatePlayerCharacter(req: Request, res: Response) {
         }
     });
 }
+
+export async function getPlayerCharacters(req: Request, res: Response) {
+    const pageId: number = parseInt(req.params.page) || 1;
+    res.send(await new Character().getPaginatedList(pageId, 3))
+}
