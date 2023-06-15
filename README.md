@@ -48,6 +48,17 @@ docker run --rm -it --network chargen-net mysql mysql -h chargen-mysql-server -u
 
 Unless stated, the given endpoints require authentication.
 
+### `character/generate`
+```
+{
+    "name": "Brock",
+    "class_id": 1,
+    "race_id": 1,
+    "num_hit_die": 2,
+    "alignment": "Moody",
+}
+```
+
 ### `/class/add`
 ```
 {

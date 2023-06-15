@@ -13,7 +13,6 @@ export async function addClass(req: Request, res: Response) {
     const newClass: CharacterClass = new CharacterClass(req.body);
     newClass.stats_id = statsId;
     newClass.owner_id = req.loggedInID as number;
-    console.log(newClass);
     if(!newClass.isValid()) {
         rh.errorInvalidBody(res);
         return;
