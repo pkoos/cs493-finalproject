@@ -7,7 +7,7 @@ import { addCharacterImage, getCharacterImage, getCharacterImageThumbnail } from
 import { requireAuthentication } from './utils/auth-helper';
 import * as rh from './utils/responses-helper';
 
-import { initializeAsyncController, requestTest } from './controllers/async-controller';
+import { initializeAsyncController, requestTest, requestCharacterDescription } from './controllers/async-controller';
 import { initializeRateLimiting, rateLimit } from './utils/rate-limit-helper';
 import { addRace, deleteRace, modifyRace } from './controllers/race-controller';
 import { addClass, deleteClass } from './controllers/character-class-controller';
@@ -69,6 +69,9 @@ app.post(deletePlayerCharacterPath, (req: Request, res: Response) => {
         "status": "deletePlayerCharacterPath"
     });
 });
+
+const generateCharacterDescriptionPath: string = `${baseApiPath}/character/:pc_id/description`;
+app.get(generateCharacterDescriptionPath, requestCharacterDescription);
 
 
 const addRacePath: string = `${baseApiPath}/race/add`;
@@ -183,7 +186,7 @@ async function initializeDatabase() {
         stats_id MEDIUMINT NOT NULL,
         name VARCHAR(255) NOT NULL,
         hitpoints INT NOT NULL,
-        background VARCHAR(1024),
+        background TEXT,
         alignment VARCHAR(64) NOT NULL)`;
     await db.query(createPlayerCharacterTable);
 
