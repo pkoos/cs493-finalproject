@@ -1,0 +1,70 @@
+version: '3'
+services:
+  rmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+    expose:
+      - 5672
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 15s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+  db:
+    image: mysql
+    ports: 
+      - 3306:3306
+    expose: 
+      - 3306
+    environment:
+      PORT: 3306
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3306"]
+      interval: 15s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    expose:
+      - 6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+  api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      PORT: 8000
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOST: ${MYSQL_HOST}
+      RABBITMQ_HOST: ${RABBITMQ_HOST}
+      REDIS_HOST: ${REDIS_HOST}
+    depends_on:
+      db:
+        condition: service_healthy
+      rmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    links:
+      - db
+      - rmq
+      - redis

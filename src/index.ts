@@ -28,8 +28,9 @@ export const db: Pool =  mysql2.createPool({
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
     host: process.env.MYSQL_HOST ?? "localhost",
-    port: 3306
+    port: parseInt(process.env.MYSQL_PORT as string) ?? 3306
 });
+
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -251,6 +252,8 @@ async function initializeDatabase() {
         description VARCHAR(1024) NOT NULL,
         cost INT UNSIGNED NOT NULL)`;
     await db.query(createEquipmentTable);
+
+    console.log(`Database Initialization complete`)
 }
 
 async function initializeAPI() {
