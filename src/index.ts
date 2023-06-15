@@ -186,7 +186,7 @@ async function initializeDatabase() {
         stats_id MEDIUMINT NOT NULL,
         name VARCHAR(255) NOT NULL,
         hitpoints INT NOT NULL,
-        background VARCHAR(1024),
+        background TEXT,
         alignment VARCHAR(64) NOT NULL)`;
     await db.query(createPlayerCharacterTable);
 
