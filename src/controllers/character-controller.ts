@@ -4,6 +4,7 @@ import { CharacterClass } from '../models/character-class';
 import { Race } from '../models/race';
 import { errorInvalidBody, successResponse } from '../utils/responses-helper';
 import { generate_dice_roll } from '../utils/number-generation';
+import { requestCharacterDescription } from './async-controller';
 import { Stats, StatsType } from '../models/stats';
 
 export async function generatePlayerCharacter(req: Request, res: Response) {
@@ -48,6 +49,8 @@ export async function generatePlayerCharacter(req: Request, res: Response) {
     });
 
     const character_id: number = await playerCharacter.insert();
+
+    requestCharacterDescription(playerCharacter.id);
 
     successResponse(res, {
         "status": "success",
